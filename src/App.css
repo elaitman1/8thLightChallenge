@@ -1,59 +1,60 @@
-body{
+header {
   display:flex;
   flex-direction:column;
-}
-
-header {
   padding: 30px 0 30px 0;
   background: Black;
   color: #fff;
-  text-align:center;
 }
 
 header h1 {
+  text-align:center;
   display: inline;
-  margin-left: 15px;
   font-weight:300;
 }
 
-.searchArea{
-  margin:10em;
+/* .search-area{
+  display:flex;
+  flex-direction:column;
+} */
+
+form {
+  padding: 10px;
+  font-size: 17px;
+  width: 50%;
 }
 
-input {
-  margin:10px;
+form input{
   padding: 10px;
   font-size: 17px;
   border: 1px solid grey;
-  float: left;
   width: 50%;
   background: #f1f1f1;
 }
 
-button {
+button{
   margin:10px;
   padding: 10px;
   font-size: 17px;
   border: 1px solid grey;
-  float: left;
-  width: 30%;
   background: #f1f1f1;
 }
 
-.bodyBookInfo{
+.bookList{
+  margin-left:1em;
+}
 
+ .bodyBookInfo{
   padding: 50px;
   border-bottom: 1px solid red;
 }
 
-.searchedBooks{
+/* .searchedBooks{
   display:flex;
   flex-direction:column;
   margin-top:4em;
-}
+} */
 
 .readingList{
   display:flex;
   flex-direction:column;
 }
-

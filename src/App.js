@@ -1,7 +1,9 @@
 import React from 'react';
+import Title from './components/Title'
+import SearchBooksForm from './components/SearchBooksForm'
+import SearchResults from './components/SearchResults'
+import ReadingList from './components/ReadingList'
 import './App.css';
-
-
 class App extends React.Component{
 
   state = {
@@ -17,7 +19,8 @@ class App extends React.Component{
 
   searchBook = async (e) => {
     e.preventDefault()
-    let term = this.state.searchField.trim().toLowerCase()
+    let { searchField } = this.state
+    let term = searchField.trim().toLowerCase()
     
     await fetch(`https://www.googleapis.com/books/v1/volumes?q=${term}`)
     .then(r => r.json())
@@ -29,10 +32,14 @@ class App extends React.Component{
         this.setState({ books: r.items, searchField:""})
       }
     })
+    .catch(() => {
+      console.log("error");
+    });
   }
 
   handleShowList = () => {
-    this.setState({list:!this.state.list})
+    let { list } = this.state
+    this.setState({list:!list})
   }
 
   handleShowReadingList = () => {
@@ -44,11 +51,13 @@ class App extends React.Component{
   }
 
   mapThroughList = (l) => {
+    let { books } = this.state
     return (
       l.map(book =>{
         let v = book.volumeInfo
         let n = "Not Listed"
         let u = undefined
+
         if(v.publisher === u){
           v.publisher = n
         }
@@ -60,15 +69,16 @@ class App extends React.Component{
         }
 
         return <div className="searchedBooks">
-          <div>
-          <h2>Title: {v.title}</h2>
-          <h2>Author: {v.authors}</h2>        
-          <h2>Publisher: {v.publisher}</h2>   
-        </div>
-        {l === this.state.books?
+        <>
+        <h2>Title: {v.title}</h2>
+        <h2>Author: {v.authors}</h2>        
+        <h2>Publisher: {v.publisher}</h2>   
+        </>
+        
+        {l === books?
             <button value={v.title} onClick={this.addToReadingList}>Add to Reading List</button>
           :
-            <></>
+            <div style={{border:"solid"}}></div>
           }
         </div>
       })
@@ -76,48 +86,30 @@ class App extends React.Component{
   }
   
   addToReadingList = (e) => {
-    let foundBook = this.state.books.find(book=>book.volumeInfo.title === e.target.value)
-    this.setState({rlist:[...this.state.rlist, foundBook]})
+    let { books, rlist } = this.state
+    let foundBook = books.find(book=>book.volumeInfo.title === e.target.value)
+    this.setState({rlist:[...rlist, foundBook]})
   }
 
-
   render(){
-    let { books, list } = this.state
-
+    let { books, list, searchField } = this.state
     return (
-      <div className="App">
-        <header>
-          <h1>Find Your Book</h1>
-        </header>
-
-        <section className="search-area">
-          <form onSubmit={this.searchBook} >
-            <input onChange={this.handleSearch} type="text" placeholder="Search" value={this.state.searchField}/>
-            <button type="submit">Search</button>
-          </form>
-        </section>
-        
-        <section className="bookList">
-        {this.mapThroughList(books)}
-        </section>
-
-        <section className="readingList">
-        <button onClick={this.handleShowList}>
-          {list? 
-            <p><u>Hide</u> My Reading List</p>
-          :
-            <p><u>View</u> My Reading List</p>
-          }
-        </button>
-        
-          {list? 
-            <div>{this.handleShowReadingList()}</div>
-          :
-            <></>
-          }
-        </section>
-
-      </div>
+      <>
+        <Title />
+        <SearchBooksForm 
+          searchBook={this.searchBook} 
+          handleSearch={this.handleSearch} 
+          searchField={searchField}
+        />
+        <SearchResults 
+          mapThroughList={this.mapThroughList} 
+          books={books} 
+        />
+        <ReadingList
+          handleShowList={this.handleShowList} list={list} 
+          handleShowReadingList={this.handleShowReadingList}
+        />
+      </>
     )
   };
 }
